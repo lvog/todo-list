@@ -1,0 +1,185 @@
+:root {
+  --white: #fff;
+  --black: #000;
+  --purple: #6c63ff;
+  --dark-purple: #3e33f9;
+  --red: #e10606;
+
+  --base-font-family: "Montserrat", sans-serif;
+  --base-font-size: 14px;
+  --base-bg: var(--white);
+  --base-border-radius: 5px;
+
+  --input-height: 40px;
+  --input-padding: 10px 15px;
+  --input-border-color: var(--purple);
+
+  --btn-min-width: 100px;
+  --btn-padding: 10px 15px;
+  --btn-color: var(--white);
+  --btn-bg: var(--purple);
+  --btn-bg-hover: var(--dark-purple);
+  --btn-border-color: var(--purple);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 360px;
+  font-family: var(--base-font-family);
+  font-size: var(--base-font-size);
+  line-height: 1.5;
+  background: var(--base-bg);
+  margin: 0;
+}
+
+input:focus,
+input:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+#wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.form-holder {
+  max-width: 400px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.note-info {
+  width: calc(100% - 110px);
+  height: var(--input-height);
+  padding: var(--input-padding);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--base-border-radius);
+}
+
+.btn {
+  min-width: var(--btn-min-width);
+  display: inline-block;
+  vertical-align: middle;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--btn-color);
+  background: var(--btn-bg);
+  padding: var(--btn-padding);
+  border: 1px solid var(--btn-border-color);
+  border-radius: var(--base-border-radius);
+  transition: background 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background: var(--btn-bg-hover);
+}
+
+.note {
+  border-bottom: 1px solid var(--purple);
+  position: relative;
+}
+
+.note label {
+  padding: 10px 30px 10px 0;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.note input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.note .checkmark {
+  min-width: 26px;
+  height: 26px;
+  margin-right: 10px;
+  border: 1px solid var(--purple);
+  border-radius: 2px;
+  position: relative;
+  transition: background 0.3s ease-in-out;
+}
+
+.note .checkmark::before {
+  content: "";
+  width: 6px;
+  height: 12px;
+  position: absolute;
+  top: 5px;
+  left: 9px;
+  border-right: 2px solid var(--white);
+  border-bottom: 2px solid var(--white);
+  transform: rotate(45deg);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.note:hover .btn-delete {
+  opacity: 1;
+  visibility: visible;
+}
+
+.note.checked label {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.note.checked .checkmark {
+  background: var(--purple);
+}
+
+.note.checked .checkmark::before {
+  opacity: 1;
+}
+
+.btn-delete {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 0;
+  background: transparent;
+  border: none;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    color 0.3s ease-in-out,
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
+}
+
+.btn-delete:hover {
+  color: var(--red);
+}
+
+.btn-delete svg {
+  width: 24px;
+}
