@@ -5,6 +5,8 @@
   --dark-purple: #3e33f9;
   --red: #e10606;
 
+  --overlay: rgba(37, 37, 37, 0.7);
+
   --base-font-family: "Montserrat", sans-serif;
   --base-font-size: 14px;
   --base-bg: var(--white);
@@ -20,6 +22,11 @@
   --btn-bg: var(--purple);
   --btn-bg-hover: var(--dark-purple);
   --btn-border-color: var(--purple);
+
+  --btn-outline-color: var(--purple);
+  --btn-outline-bg: transparent;
+  --btn-outline-color-hover: var(--white);
+  --btn-outline-bg-hover: var(--purple);
 }
 
 *,
@@ -35,6 +42,16 @@ body {
   line-height: 1.5;
   background: var(--base-bg);
   margin: 0;
+  position: relative;
+}
+
+.popup-active {
+  overflow: hidden;
+}
+
+.popup-active .popup {
+  opacity: 1;
+  visibility: visible;
 }
 
 input:focus,
@@ -53,33 +70,31 @@ svg {
   height: auto;
 }
 
+h1,
+h2 {
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 20px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+h2 {
+  font-size: 22px;
+}
+
 #wrapper {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  justify-content: center;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
-.form-holder {
-  max-width: 400px;
+.todo-block {
+  max-width: 500px;
   width: 100%;
-}
-
-.form-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-.note-info {
-  width: calc(100% - 110px);
-  height: var(--input-height);
-  padding: var(--input-padding);
-  border: 1px solid var(--input-border-color);
-  border-radius: var(--base-border-radius);
+  padding: 30px 15px;
+  margin: 0 auto;
 }
 
 .btn {
@@ -93,11 +108,74 @@ svg {
   padding: var(--btn-padding);
   border: 1px solid var(--btn-border-color);
   border-radius: var(--base-border-radius);
-  transition: background 0.3s ease-in-out;
+  transition:
+    color 0.3s ease-in-out,
+    background 0.3s ease-in-out;
 }
 
 .btn:hover {
   background: var(--btn-bg-hover);
+}
+
+.btn.btn-outline {
+  color: var(--btn-outline-color);
+  background: var(--btn-outline-bg);
+}
+
+.btn.btn-outline:hover {
+  color: var(--btn-outline-color-hover);
+  background: var(--btn-outline-bg-hover);
+}
+
+.popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
+  z-index: 2;
+}
+
+.popup-block {
+  min-height: 250px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  background: var(--white);
+  border-radius: 15px;
+}
+
+.popup .btn-holder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -5px;
+}
+
+.popup .btn {
+  margin: 5px;
+}
+
+.note-info {
+  width: 100%;
+  height: var(--input-height);
+  padding: var(--input-padding);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--base-border-radius);
+}
+
+.notes-holder {
+  margin-bottom: 30px;
 }
 
 .note {
@@ -141,7 +219,8 @@ svg {
   transition: opacity 0.3s ease-in-out;
 }
 
-.note:hover .btn-delete {
+.note:not(.checked):hover .btn-delete,
+.note:not(.checked):hover .btn-edit {
   opacity: 1;
   visibility: visible;
 }
@@ -159,10 +238,10 @@ svg {
   opacity: 1;
 }
 
+.btn-edit,
 .btn-delete {
   position: absolute;
   top: 50%;
-  right: 0;
   transform: translateY(-50%);
   padding: 0;
   background: transparent;
@@ -176,10 +255,64 @@ svg {
     visibility 0.3s ease-in-out;
 }
 
+.btn-delete {
+  right: 0;
+}
+
 .btn-delete:hover {
   color: var(--red);
 }
 
 .btn-delete svg {
   width: 24px;
+}
+
+.btn-edit {
+  right: 30px;
+}
+
+.btn-edit:hover {
+  color: var(--purple);
+}
+
+.btn-edit svg {
+  width: 16px;
+}
+
+.btn-opener {
+  display: block;
+  width: 50px;
+  height: 50px;
+  padding: 5px;
+  margin-left: auto;
+  position: relative;
+  background: var(--btn-bg);
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn-opener:hover {
+  background: var(--btn-bg-hover);
+}
+
+.btn-opener::before,
+.btn-opener::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--white);
+}
+
+.btn-opener::before {
+  width: 24px;
+  height: 2px;
+}
+
+.btn-opener::after {
+  width: 2px;
+  height: 24px;
 }
