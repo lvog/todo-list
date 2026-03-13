@@ -5,6 +5,7 @@ class Todo {
     this.textNote = null;
     this.notesHolder = null;
     this.notes = [];
+    this.filterCategory = "all";
     this.id = 0;
     this.editNoteId = 0;
     this.popup = null;
@@ -18,6 +19,7 @@ class Todo {
     this.handleSubmit();
     this.handleCheckboxChange();
     this.handleDeleteNote();
+    this.initFiltration();
   }
 
   findElements() {
@@ -35,9 +37,13 @@ class Todo {
     this.notes = JSON.parse(currentNotes);
     this.id = this.notes.reduce((max, obj) => (obj.id > max ? obj.id : max), 0);
 
-    this.notes.forEach(({ id, value, checked }) => {
-      this.addNote(id, value, checked);
-    });
+    if (this.notes.length > 0) {
+      this.notes.forEach(({ id, value, checked }) => {
+        this.addNote(id, value, checked);
+      });
+    } else {
+      this.addImage();
+    }
   }
 
   handleSubmit() {
@@ -60,7 +66,7 @@ class Todo {
 
   handleCheckboxChange() {
     this.notesHolder.addEventListener("change", (e) => {
-      const checkbox = e.target.closest('input[type="checkbox"]');
+      const checkbox = e.target.closest("input");
 
       if (!checkbox) return;
 
@@ -84,6 +90,10 @@ class Todo {
 
       note.remove();
       this.removeNoteFromStorage(noteId);
+
+      if (this.notes.length < 1) {
+        this.addImage();
+      }
     });
   }
 
@@ -149,6 +159,8 @@ class Todo {
       </svg>
     </button>
     `;
+
+    this.removeImage();
     this.notesHolder.appendChild(newNote);
   }
 
@@ -211,6 +223,62 @@ class Todo {
 
   closePopup() {
     document.body.classList.remove("popup-active");
+  }
+
+  initFiltration() {
+    this.holder.addEventListener("change", (e) => {
+      const select = e.target.closest("select");
+
+      if (select) {
+        this.filterCategory = e.target.value;
+      }
+
+      this.renderNotes();
+    });
+  }
+
+  renderNotes() {
+    const filterNotes = this.filterNotes();
+    this.clearNotesDOM();
+
+    if (filterNotes.length > 0) {
+      filterNotes.forEach(({ id, value, checked }) => {
+        this.addNote(id, value, checked);
+      });
+    } else {
+      this.addImage();
+    }
+  }
+
+  filterNotes() {
+    switch (this.filterCategory) {
+      case "completed":
+        return this.notes.filter((note) => note.checked);
+      case "active":
+        return this.notes.filter((note) => !note.checked);
+      default:
+        return this.notes;
+    }
+  }
+
+  clearNotesDOM() {
+    this.notesHolder.innerHTML = "";
+  }
+
+  addImage() {
+    const img = document.createElement("img");
+    img.classList.add("main-img");
+    img.src = "empty.svg";
+    img.alt = "Detective check footprint";
+
+    this.notesHolder.appendChild(img);
+  }
+
+  removeImage() {
+    const img = this.holder.querySelector(".main-img");
+    if (img) {
+      img.remove();
+    }
   }
 }
 
