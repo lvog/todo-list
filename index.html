@@ -3,26 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>To do list</title>
+    <title>Todo list App</title>
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Montserrat:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
     <script src="main.js" defer></script>
   </head>
   <body>
-    <div id="wrapper">
+    <div class="wrapper">
       <div class="todo-block">
         <h1>Todo list</h1>
         <form class="todo-form" action="#">
-          <select id="filter" name="filter">
-            <option value="all">All</option>
-            <option value="completed">Completed</option>
-            <option value="active">Active</option>
-          </select>
+          <div class="filter-group">
+            <div class="input-holder">
+              <input
+                class="search"
+                type="search"
+                name="search"
+                placeholder="Search notes"
+                aria-label="Search for notes field"
+              />
+              <svg
+                class="icon"
+                width="21"
+                height="21"
+                viewBox="0 0 21 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20.7773 19.684L15.9056 14.812H15.8531C17.3547 13.0415 18.1136 10.7588 17.9709 8.44156C17.8282 6.12433 16.7951 3.95202 15.0876 2.37905C13.3801 0.806082 11.1306 -0.0456971 8.80958 0.0018919C6.48855 0.0494809 4.27583 0.992752 2.63427 2.63439C0.992706 4.27602 0.0494786 6.48885 0.00189181 8.80999C-0.045695 11.1311 0.806045 13.3808 2.37894 15.0883C3.95184 16.7958 6.12404 17.829 8.44117 17.9717C10.7583 18.1144 13.0408 17.3555 14.8113 15.8539C14.8113 15.8539 14.8113 15.8914 14.8113 15.9063L19.6831 20.7783C19.7527 20.8485 19.8356 20.9043 19.927 20.9424C20.0183 20.9804 20.1163 21 20.2152 21C20.3141 21 20.4121 20.9804 20.5034 20.9424C20.5948 20.9043 20.6777 20.8485 20.7473 20.7783C20.8242 20.7103 20.8862 20.6272 20.9296 20.5342C20.9731 20.4412 20.9969 20.3402 20.9997 20.2376C21.0025 20.135 20.9842 20.033 20.946 19.9377C20.9077 19.8425 20.8503 19.7561 20.7773 19.684ZM9.00276 16.4685C7.5204 16.4685 6.07133 16.0289 4.83879 15.2053C3.60625 14.3817 2.64561 13.2111 2.07833 11.8415C1.51106 10.4719 1.36263 8.96488 1.65183 7.51094C1.94102 6.05699 2.65485 4.72146 3.70303 3.67322C4.75122 2.62499 6.08669 1.91113 7.54057 1.62192C8.99445 1.33272 10.5014 1.48115 11.871 2.04845C13.2405 2.61575 14.411 3.57644 15.2346 4.80904C16.0581 6.04163 16.4977 7.49077 16.4977 8.9732C16.4977 9.95749 16.3038 10.9322 15.9272 11.8415C15.5505 12.7509 14.9985 13.5772 14.3025 14.2732C13.6065 14.9692 12.7803 15.5213 11.871 15.8979C10.9616 16.2746 9.98701 16.4685 9.00276 16.4685Z"
+                  fill="#6C63FF"
+                />
+              </svg>
+            </div>
+            <div class="select-holder">
+              <select
+                id="filter"
+                name="filter"
+                aria-label="Select to filter notes"
+              >
+                <option value="all">All</option>
+                <option value="completed">Completed</option>
+                <option value="active">Active</option>
+              </select>
+              <svg
+                class="icon"
+                width="10"
+                height="10"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 10 10"
+              >
+                <path
+                  d="M1 3 L5 7 L9 3"
+                  stroke="#fff"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
           <div class="popup">
             <div class="popup-block">
               <div class="info-holder">
@@ -30,19 +89,62 @@
                 <input
                   class="note-info"
                   type="text"
-                  placeholder="Add your note ..."
                   name="note"
+                  placeholder="Add your note ..."
+                  aria-label="Add note field"
                 />
               </div>
               <div class="btn-holder">
                 <button class="btn btn-outline" type="reset">Cancel</button>
-                <button class="btn" type="submit">Apply</button>
+                <button class="btn" type="submit">Add</button>
               </div>
             </div>
           </div>
         </form>
         <div class="notes-holder"></div>
-        <button class="btn-opener popup-opener"></button>
+        <button
+          class="btn-opener popup-opener"
+          aria-label="Open popup button"
+        ></button>
+        <template id="note-template">
+          <div class="note">
+            <label>
+              <input type="checkbox" name="todo-notes" />
+              <span class="checkmark"></span>
+              <span class="label"></span>
+            </label>
+            <button class="btn-edit popup-opener" type="button">
+              <svg
+                viewBox="0 0 14 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.17272 3.49106L0.5 10.1637V13.5H3.83636L10.5091 6.82736M7.17272 3.49106L9.5654 1.09837L9.5669 1.09695C9.8962 0.767585 10.0612 0.602613 10.2514 0.540824C10.4189 0.486392 10.5993 0.486392 10.7669 0.540824C10.9569 0.602571 11.1217 0.767352 11.4506 1.09625L12.9018 2.54738C13.2321 2.87769 13.3973 3.04292 13.4592 3.23337C13.5136 3.40088 13.5136 3.58133 13.4592 3.74885C13.3974 3.93916 13.2324 4.10414 12.9025 4.43398L12.9018 4.43468L10.5091 6.82736M7.17272 3.49106L10.5091 6.82736"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-delete" type="button">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 7V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V7M6 7H5M6 7H8M18 7H19M18 7H16M10 11V16M14 11V16M8 7V5C8 3.89543 8.89543 3 10 3H14C15.1046 3 16 3.89543 16 5V7M8 7H16"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </template>
       </div>
     </div>
   </body>

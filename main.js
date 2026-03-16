@@ -2,17 +2,20 @@ class Todo {
   constructor(selector) {
     this.holder = document.querySelector(selector);
     this.form = null;
+    this.search = null;
+    this.select = null;
     this.textNote = null;
     this.notesHolder = null;
+    this.noteTemplate = null;
     this.notes = [];
+    this.filterNotes = [];
     this.filterCategory = "all";
-    this.id = 0;
     this.editNoteId = 0;
     this.popup = null;
   }
 
   init() {
-    if (!this.holder) return console.log("There is no such element!");
+    if (!this.holder) return;
     this.findElements();
     this.loadNotes();
     this.initPopup();
@@ -20,13 +23,18 @@ class Todo {
     this.handleCheckboxChange();
     this.handleDeleteNote();
     this.initFiltration();
+    this.handleSearch();
+    this.handleAnimateObserver();
   }
 
   findElements() {
     this.form = this.holder.querySelector(".todo-form");
+    this.search = this.holder.querySelector(".search");
+    this.select = this.holder.querySelector("#filter");
     this.textNote = this.holder.querySelector(".note-info");
     this.notesHolder = this.holder.querySelector(".notes-holder");
     this.popup = this.holder.querySelector(".popup");
+    this.noteTemplate = this.holder.querySelector("#note-template");
   }
 
   loadNotes() {
@@ -35,7 +43,7 @@ class Todo {
     if (!currentNotes) return;
 
     this.notes = JSON.parse(currentNotes);
-    this.id = this.notes.reduce((max, obj) => (obj.id > max ? obj.id : max), 0);
+    this.filterNotes = [...this.notes];
 
     if (this.notes.length > 0) {
       this.notes.forEach(({ id, value, checked }) => {
@@ -46,6 +54,26 @@ class Todo {
     }
   }
 
+  handleSearch() {
+    this.search.addEventListener("input", (e) => {
+      const value = e.target.value.trim().toLowerCase();
+
+      const searchResult = this.filterNotes.filter((note) =>
+        note.value.toLowerCase().includes(value),
+      );
+
+      if (searchResult.length > 0) {
+        this.clearNotesDOM();
+        searchResult.forEach(({ id, value, checked }) => {
+          this.addNote(id, value, checked);
+        });
+      } else {
+        this.clearNotesDOM();
+        this.addImage();
+      }
+    });
+  }
+
   handleSubmit() {
     this.form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -54,19 +82,20 @@ class Todo {
 
       if (!value) return;
 
+      this.addClass(this.notesHolder, "is-animate");
       this.editNoteId
         ? this.editNote(this.editNoteId, value)
         : this.addNewNote(value);
 
       this.form.reset();
-      this.closePopup();
+      this.removeClass(document.body, "popup-active");
       this.editNoteId = 0;
     });
   }
 
   handleCheckboxChange() {
     this.notesHolder.addEventListener("change", (e) => {
-      const checkbox = e.target.closest("input");
+      const checkbox = e.target.closest("input[type='checkbox']");
 
       if (!checkbox) return;
 
@@ -85,8 +114,11 @@ class Todo {
 
       if (!btn) return;
 
+      this.addClass(this.notesHolder, "is-animate");
       const note = btn.closest(".note");
-      const noteId = Number(note.querySelector("input").getAttribute("id"));
+      const noteId = Number(
+        note.querySelector("input[type='checkbox']").getAttribute("id"),
+      );
 
       note.remove();
       this.removeNoteFromStorage(noteId);
@@ -94,6 +126,19 @@ class Todo {
       if (this.notes.length < 1) {
         this.addImage();
       }
+    });
+  }
+
+  handleAnimateObserver() {
+    const observer = new MutationObserver(() => {
+      setTimeout(() => {
+        this.removeClass(this.notesHolder, "is-animate");
+      }, 100);
+    });
+
+    observer.observe(this.notesHolder, {
+      childList: true,
+      subtree: true,
     });
   }
 
@@ -124,41 +169,26 @@ class Todo {
   }
 
   addNewNote(value) {
-    this.id += 1;
-    this.addNote(this.id, value);
-    this.addNoteToStorage(this.id, value);
+    const id = Date.now();
+
+    this.addNote(id, value);
+    this.addNoteToStorage(id, value);
   }
 
   addNote(id, value, checked = false) {
-    const newNote = document.createElement("div");
-    const noteClass = !checked ? "note" : "note checked";
+    const newNote = this.noteTemplate.content.cloneNode(true);
 
-    newNote.className = noteClass;
-    newNote.innerHTML = `
-    <label for="${id}">
-      <input type="checkbox" id="${id}" name="todo-notes" value="${value}" ${checked ? "checked" : ""}>
-      <span class="checkmark"></span>
-      <span class="label">${value}</span>
-    </label>
-    <button class="btn-edit popup-opener" type="button">
-      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.17272 3.49106L0.5 10.1637V13.5H3.83636L10.5091 6.82736M7.17272 3.49106L9.5654 1.09837L9.5669 1.09695C9.8962 0.767585 10.0612 0.602613 10.2514 0.540824C10.4189 0.486392 10.5993 0.486392 10.7669 0.540824C10.9569 0.602571 11.1217 0.767352 11.4506 1.09625L12.9018 2.54738C13.2321 2.87769 13.3973 3.04292 13.4592 3.23337C13.5136 3.40088 13.5136 3.58133 13.4592 3.74885C13.3974 3.93916 13.2324 4.10414 12.9025 4.43398L12.9018 4.43468L10.5091 6.82736M7.17272 3.49106L10.5091 6.82736" 
-          stroke="currentColor"
-          stroke-width="1"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <button class="btn-delete" type="button">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 7V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V7M6 7H5M6 7H8M18 7H19M18 7H16M10 11V16M14 11V16M8 7V5C8 3.89543 8.89543 3 10 3H14C15.1046 3 16 3.89543 16 5V7M8 7H16" 
-          stroke="currentColor" 
-          stroke-width="1" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"/>
-      </svg>
-    </button>
-    `;
+    const note = newNote.querySelector(".note");
+    const labelHolder = newNote.querySelector("label");
+    const checkbox = newNote.querySelector("input");
+    const label = newNote.querySelector(".label");
+
+    note.className = !checked ? "note" : "note checked";
+    labelHolder.setAttribute("for", id);
+    checkbox.id = id;
+    checkbox.value = value;
+    checkbox.checked = checked;
+    label.textContent = value;
 
     this.removeImage();
     this.notesHolder.appendChild(newNote);
@@ -195,62 +225,60 @@ class Todo {
 
       if (isEditBtn) {
         const note = isEditBtn.closest(".note");
-        const checkbox = note.querySelector("input");
+        const checkbox = note.querySelector("input[type='checkbox']");
 
         this.editNoteId = Number(checkbox.getAttribute("id"));
         this.textNote.value = checkbox.value;
       }
 
-      this.openPopup();
+      this.addClass(document.body, "popup-active");
     });
 
     this.form.addEventListener("reset", () => {
-      this.closePopup();
+      this.removeClass(document.body, "popup-active");
     });
 
     this.popup.addEventListener("click", (e) => {
       const isPopup = e.target.closest(".popup-block");
 
       if (!isPopup) {
-        this.closePopup();
+        this.removeClass(document.body, "popup-active");
       }
     });
   }
 
-  openPopup() {
-    document.body.classList.add("popup-active");
+  addClass(el, className) {
+    el.classList.add(className);
   }
 
-  closePopup() {
-    document.body.classList.remove("popup-active");
+  removeClass(el, className) {
+    el.classList.remove(className);
   }
 
   initFiltration() {
-    this.holder.addEventListener("change", (e) => {
-      const select = e.target.closest("select");
-
-      if (select) {
-        this.filterCategory = e.target.value;
-      }
-
+    this.select.addEventListener("change", (e) => {
+      this.filterCategory = e.target.value;
       this.renderNotes();
     });
   }
 
   renderNotes() {
-    const filterNotes = this.filterNotes();
+    this.addClass(this.notesHolder, "is-animate");
+    this.filterNotes = this.filter();
     this.clearNotesDOM();
 
-    if (filterNotes.length > 0) {
-      filterNotes.forEach(({ id, value, checked }) => {
+    if (this.filterNotes.length > 0) {
+      this.filterNotes.forEach(({ id, value, checked }) => {
         this.addNote(id, value, checked);
       });
     } else {
       this.addImage();
     }
+
+    this.search.value = "";
   }
 
-  filterNotes() {
+  filter() {
     switch (this.filterCategory) {
       case "completed":
         return this.notes.filter((note) => note.checked);
@@ -268,14 +296,14 @@ class Todo {
   addImage() {
     const img = document.createElement("img");
     img.classList.add("main-img");
-    img.src = "empty.svg";
+    img.src = "images/empty.svg";
     img.alt = "Detective check footprint";
 
     this.notesHolder.appendChild(img);
   }
 
   removeImage() {
-    const img = this.holder.querySelector(".main-img");
+    const img = this.notesHolder.querySelector(".main-img");
     if (img) {
       img.remove();
     }
