@@ -151,6 +151,12 @@ h2 {
   background: var(--btn-outline-bg-hover);
 }
 
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
 .wrapper {
   position: relative;
   overflow: hidden;

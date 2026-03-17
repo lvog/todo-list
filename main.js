@@ -2,6 +2,7 @@ class Todo {
   constructor(selector) {
     this.holder = document.querySelector(selector);
     this.form = null;
+    this.filterControls = null;
     this.search = null;
     this.select = null;
     this.textNote = null;
@@ -29,6 +30,7 @@ class Todo {
 
   findElements() {
     this.form = this.holder.querySelector(".todo-form");
+    this.filterControls = this.holder.querySelector(".filter-group");
     this.search = this.holder.querySelector(".search");
     this.select = this.holder.querySelector("#filter");
     this.textNote = this.holder.querySelector(".note-info");
@@ -44,6 +46,8 @@ class Todo {
 
     this.notes = JSON.parse(currentNotes);
     this.filterNotes = [...this.notes];
+
+    this.updateControlsState();
 
     if (this.notes.length > 0) {
       this.notes.forEach(({ id, value, checked }) => {
@@ -83,9 +87,12 @@ class Todo {
       if (!value) return;
 
       this.addClass(this.notesHolder, "is-animate");
+
       this.editNoteId
         ? this.editNote(this.editNoteId, value)
         : this.addNewNote(value);
+
+      this.updateControlsState();
 
       this.form.reset();
       this.removeClass(document.body, "popup-active");
@@ -126,6 +133,8 @@ class Todo {
       if (this.notes.length < 1) {
         this.addImage();
       }
+
+      this.updateControlsState();
     });
   }
 
@@ -307,6 +316,12 @@ class Todo {
     if (img) {
       img.remove();
     }
+  }
+
+  updateControlsState() {
+    !this.notes.length
+      ? this.addClass(this.filterControls, "disabled")
+      : this.removeClass(this.filterControls, "disabled");
   }
 }
 
