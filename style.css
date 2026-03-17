@@ -242,6 +242,9 @@ h2 {
 }
 
 .notes-holder {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   margin-bottom: 30px;
   transition:
     opacity 0.3s ease-in-out,
@@ -280,6 +283,10 @@ h2 {
   background: var(--white);
 }
 
+.note.dragging .icon {
+  opacity: 1;
+}
+
 .note label {
   display: flex;
   align-items: center;
@@ -316,6 +323,11 @@ h2 {
   transform: rotate(45deg);
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
+}
+
+.note .icon {
+  width: 24px;
+  opacity: 0;
 }
 
 .note:not(.dragging):hover .btn-delete {
