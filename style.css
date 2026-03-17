@@ -166,6 +166,7 @@ h2 {
   max-width: 500px;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 30px 15px 100px;
   margin: 0 auto;
   position: relative;
@@ -245,6 +246,7 @@ h2 {
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  touch-action: none;
   margin-bottom: 30px;
   transition:
     opacity 0.3s ease-in-out,
