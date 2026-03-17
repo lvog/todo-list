@@ -209,6 +209,7 @@ h2 {
   justify-content: center;
   position: fixed;
   inset: 0;
+  padding: 15px;
   background: var(--overlay);
   opacity: 0;
   visibility: hidden;
