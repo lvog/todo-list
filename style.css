@@ -180,6 +180,10 @@ h2 {
 .input-holder,
 .select-holder {
   position: relative;
+
+  .icon {
+    pointer-events: none;
+  }
 }
 
 .input-holder {
@@ -210,7 +214,7 @@ h2 {
   transition:
     opacity 0.3s ease-in-out,
     visibility 0.3s ease-in-out;
-  z-index: 2;
+  z-index: 9999;
 }
 
 .popup-block {
@@ -255,11 +259,32 @@ h2 {
   position: relative;
 }
 
+.note.dragging {
+  color: var(--white);
+  background: var(--purple);
+  border: 1px solid var(--purple);
+  border-radius: var(--base-border-radius);
+  transform: scale(1.05);
+  cursor: grabbing;
+}
+
+.note.dragging label {
+  padding: 10px 60px 10px 10px;
+}
+
+.note.dragging .checkmark::before {
+  border-color: var(--purple);
+}
+
+.note.dragging.checked .checkmark {
+  background: var(--white);
+}
+
 .note label {
-  padding: 10px 30px 10px 0;
-  font-weight: 700;
   display: flex;
   align-items: center;
+  font-weight: 700;
+  padding: 10px 60px 10px 0;
   cursor: pointer;
 }
 
@@ -272,6 +297,7 @@ h2 {
   min-width: 26px;
   height: 26px;
   margin-right: 10px;
+  background: var(--white);
   border: 1px solid var(--purple);
   border-radius: 2px;
   position: relative;
@@ -288,15 +314,16 @@ h2 {
   border-right: 2px solid var(--white);
   border-bottom: 2px solid var(--white);
   transform: rotate(45deg);
+  opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
-.note:hover .btn-delete {
+.note:not(.dragging):hover .btn-delete {
   opacity: 1;
   visibility: visible;
 }
 
-.note:not(.checked):hover .btn-edit {
+.note:not(.checked):not(.dragging):hover .btn-edit {
   opacity: 1;
   visibility: visible;
 }

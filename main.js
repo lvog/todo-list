@@ -13,12 +13,17 @@ class Todo {
     this.filterCategory = "all";
     this.editNoteId = 0;
     this.popup = null;
+    this.draggedItem = null;
+    this.startY = 0;
+    this.isDragging = false;
   }
 
   init() {
     if (!this.holder) return;
     this.findElements();
+    this.updateControlsState();
     this.loadNotes();
+    this.initDrag();
     this.initPopup();
     this.handleSubmit();
     this.handleCheckboxChange();
@@ -322,6 +327,71 @@ class Todo {
     !this.notes.length
       ? this.addClass(this.filterControls, "disabled")
       : this.removeClass(this.filterControls, "disabled");
+  }
+
+  initDrag() {
+    this.notesHolder.addEventListener("pointerdown", (e) => {
+      if (this.notes.length < 2) return;
+
+      this.draggedItem = e.target.closest(".note");
+
+      if (!this.draggedItem) return;
+
+      this.startY = e.clientY;
+    });
+
+    document.addEventListener("pointermove", (e) => {
+      if (!this.draggedItem) return;
+
+      const mouseY = e.clientY;
+      const delta = Math.abs(mouseY - this.startY);
+
+      if (delta > 5) {
+        this.isDragging = true;
+        this.addClass(this.draggedItem, "dragging");
+      }
+
+      if (!this.isDragging) return;
+
+      const notes = [
+        ...this.notesHolder.querySelectorAll(".note:not(.dragging)"),
+      ];
+
+      const nextNote = notes.find((note) => {
+        const rect = note.getBoundingClientRect();
+        const noteCenter = rect.top + rect.height / 2;
+
+        return mouseY < noteCenter;
+      });
+
+      nextNote
+        ? this.notesHolder.insertBefore(this.draggedItem, nextNote)
+        : this.notesHolder.appendChild(this.draggedItem);
+    });
+
+    document.addEventListener("pointerup", () => {
+      if (!this.draggedItem) return;
+
+      this.updateNotesOrder();
+      this.removeClass(this.draggedItem, "dragging");
+      this.draggedItem = null;
+      this.isDragging = false;
+    });
+  }
+
+  updateNotesOrder() {
+    const notes = this.notesHolder.querySelectorAll(".note");
+
+    this.notes = [...notes].map((note) => {
+      const checkbox = note.querySelector("input[type='checkbox']");
+      return {
+        id: Number(checkbox.id),
+        value: checkbox.value,
+        checked: checkbox.checked,
+      };
+    });
+
+    this.changeStorage(this.notes);
   }
 }
 
