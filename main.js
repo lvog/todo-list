@@ -102,6 +102,7 @@ class Todo {
       this.form.reset();
       this.removeClass(document.body, "popup-active");
       this.editNoteId = 0;
+      this.renderNotes();
     });
   }
 
@@ -204,6 +205,7 @@ class Todo {
     checkbox.checked = checked;
     label.textContent = value;
 
+    this.filterCategory = "all";
     this.removeImage();
     this.notesHolder.appendChild(newNote);
   }
